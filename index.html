@@ -1,0 +1,1235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Doodle Glider</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Nunito:wght@700&display=swap');
+        
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #F4F1EA; /* Cozy paper color */
+            touch-action: none; /* Prevent scroll on touch */
+        }
+        
+        #gameCanvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        .doodle-font {
+            font-family: 'Caveat', cursive;
+        }
+
+        .ui-font {
+            font-family: 'Nunito', sans-serif;
+        }
+
+        /* Subtle paper texture overlay */
+        .paper-texture {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            opacity: 0.4;
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100' height='100' filter='url(%23noise)' opacity='0.08'/%3E%3C/svg%3E");
+            z-index: 10;
+        }
+    </style>
+</head>
+<body class="relative antialiased text-slate-800">
+
+    <!-- The Game Canvas -->
+    <canvas id="gameCanvas"></canvas>
+    
+    <!-- Paper Texture Overlay -->
+    <div class="paper-texture"></div>
+
+    <!-- UI Layer -->
+    <div id="uiLayer" class="absolute inset-0 z-20 flex flex-col items-center justify-center pointer-events-none">
+        
+        <!-- HUD (Score & Session Stars) -->
+        <div id="hud" class="absolute top-6 left-6 flex flex-col hidden transition-opacity duration-300">
+            <div class="text-3xl doodle-font text-[#1E3A8A] font-bold tracking-wider">
+                Score: <span id="scoreDisplay">0</span>
+            </div>
+            <div class="text-xl doodle-font text-[#FBBF24] font-bold tracking-wider drop-shadow-sm mt-1">
+                ⭐ <span id="sessionStarDisplay">0</span>
+            </div>
+            <!-- Powerup Indicators -->
+            <div id="powerupIndicators" class="flex gap-2 mt-2">
+                <div id="shieldIndicator" class="hidden px-3 py-1 bg-blue-100 border-2 border-[#1E3A8A] rounded-full text-[#1E3A8A] ui-font font-bold text-sm shadow-sm transition-all">🛡️ Shield</div>
+                <div id="magnetIndicator" class="hidden px-3 py-1 bg-red-100 border-2 border-[#E74C3C] rounded-full text-[#E74C3C] ui-font font-bold text-sm shadow-sm transition-all">🧲 Magnet</div>
+            </div>
+        </div>
+
+        <!-- Start Screen -->
+        <div id="startScreen" class="bg-[#F4F1EA] bg-opacity-90 p-8 rounded-2xl border-4 border-[#1E3A8A] shadow-[8px_8px_0px_#1E3A8A] flex flex-col items-center pointer-events-auto transform transition-transform duration-300">
+            <h1 class="text-6xl doodle-font text-[#1E3A8A] mb-2 text-center leading-tight">Doodle<br>Glider</h1>
+            <p class="text-slate-600 ui-font mb-4 text-center">Tap, Click, or Space to fly.</p>
+            
+            <!-- LIVE EVENT BUTTON -->
+            <button id="teaserBtn" class="mb-5 ui-font text-sm md:text-base font-bold bg-[#EF4444] text-white py-2 px-6 rounded-full border-2 border-[#1E3A8A] hover:bg-[#DC2626] transition-all shadow-[4px_4px_0px_#1E3A8A] active:translate-y-1 active:shadow-[0px_0px_0px_#1E3A8A] animate-pulse">
+                🚨 EVENT SNEAK PEEK IN: <span id="countdown">29:00:00</span> 🚨
+            </button>
+
+            <div class="mb-6 flex items-center gap-2 bg-white/50 px-4 py-2 rounded-full border-2 border-slate-300">
+                <span class="text-2xl">⭐</span>
+                <span id="totalStarsDisplay" class="ui-font font-bold text-xl text-slate-700">0</span>
+            </div>
+
+            <div class="flex gap-4">
+                <button id="shopBtn" class="ui-font text-xl font-bold bg-[#A78BFA] text-white py-3 px-6 rounded-full border-2 border-[#1E3A8A] hover:bg-[#8B5CF6] hover:-translate-y-1 transition-all shadow-[4px_4px_0px_#1E3A8A] active:shadow-[0px_0px_0px_#1E3A8A] active:translate-y-1">
+                    🛒 Shop
+                </button>
+                <button id="startBtn" class="ui-font text-xl font-bold bg-[#FBBF24] text-[#1E3A8A] py-3 px-8 rounded-full border-2 border-[#1E3A8A] hover:bg-[#F59E0B] hover:-translate-y-1 transition-all shadow-[4px_4px_0px_#1E3A8A] active:shadow-[0px_0px_0px_#1E3A8A] active:translate-y-1">
+                    Play Now
+                </button>
+            </div>
+        </div>
+
+        <!-- Shop Screen -->
+        <div id="shopScreen" class="hidden bg-[#F4F1EA] bg-opacity-95 p-6 rounded-2xl border-4 border-[#1E3A8A] shadow-[8px_8px_0px_#1E3A8A] flex flex-col items-center pointer-events-auto w-[90%] max-w-md max-h-[80%] overflow-y-auto">
+            <div class="w-full flex justify-between items-center mb-4">
+                <h2 class="text-4xl doodle-font text-[#1E3A8A]">Paper Shop</h2>
+                <div class="flex items-center gap-2 bg-white px-3 py-1 rounded-full border-2 border-slate-300">
+                    <span class="text-xl">⭐</span>
+                    <span id="shopStarsDisplay" class="ui-font font-bold text-lg text-slate-700">0</span>
+                </div>
+            </div>
+            
+            <div id="shopItemsContainer" class="w-full flex flex-col gap-3 mb-6">
+                <!-- Shop items injected here by JS -->
+            </div>
+
+            <button id="closeShopBtn" class="ui-font text-lg font-bold bg-slate-200 text-slate-700 py-2 px-8 rounded-full border-2 border-slate-400 hover:bg-slate-300 hover:-translate-y-1 transition-all shadow-[4px_4px_0px_slate-400] active:shadow-[0px_0px_0px_slate-400] active:translate-y-1">
+                Close Shop
+            </button>
+        </div>
+
+        <!-- Game Over Screen -->
+        <div id="gameOverScreen" class="hidden bg-[#F4F1EA] bg-opacity-95 p-8 rounded-2xl border-4 border-[#1E3A8A] shadow-[8px_8px_0px_#1E3A8A] flex flex-col items-center pointer-events-auto">
+            <h2 class="text-5xl doodle-font text-[#E74C3C] mb-4">Oh Snap!</h2>
+            
+            <div class="flex flex-col items-center gap-4 mb-6 ui-font font-bold text-lg w-full">
+                <div class="flex items-center justify-center gap-8 w-full">
+                    <div class="flex flex-col items-center">
+                        <span class="text-slate-500 text-sm uppercase tracking-wide">Score</span>
+                        <span id="finalScore" class="text-4xl text-[#1E3A8A]">0</span>
+                    </div>
+                    <div class="h-12 w-px bg-slate-300"></div>
+                    <div class="flex flex-col items-center">
+                        <span class="text-slate-500 text-sm uppercase tracking-wide">Best</span>
+                        <span id="bestScore" class="text-4xl text-[#1E3A8A]">0</span>
+                    </div>
+                </div>
+                <div class="bg-white/50 px-6 py-2 rounded-full border-2 border-slate-200 text-center w-full">
+                    <span class="text-slate-500 text-sm uppercase tracking-wide block mb-1">Stars Found</span>
+                    <span class="text-2xl text-[#FBBF24]">⭐ <span id="finalStars">0</span></span>
+                </div>
+            </div>
+            
+            <div class="flex gap-4">
+                <button id="goShopBtn" class="ui-font text-xl font-bold bg-[#A78BFA] text-white py-3 px-4 rounded-full border-2 border-[#1E3A8A] hover:bg-[#8B5CF6] hover:-translate-y-1 transition-all shadow-[4px_4px_0px_#1E3A8A] active:shadow-[0px_0px_0px_#1E3A8A] active:translate-y-1">
+                    🛒
+                </button>
+                <button id="restartBtn" class="ui-font text-xl font-bold bg-[#34D399] text-[#1E3A8A] py-3 px-8 rounded-full border-2 border-[#1E3A8A] hover:bg-[#10B981] hover:-translate-y-1 transition-all shadow-[4px_4px_0px_#1E3A8A] active:shadow-[0px_0px_0px_#1E3A8A] active:translate-y-1">
+                    Try Again
+                </button>
+            </div>
+        </div>
+
+        <!-- Teaser Show Screen (Hidden by Default) -->
+        <div id="teaserScreen" class="hidden absolute inset-0 z-50 bg-[#1E3A8A] bg-opacity-80 flex flex-col items-center justify-center pointer-events-auto backdrop-blur-sm transition-opacity duration-500 w-full h-full px-4">
+            <h2 class="text-6xl md:text-8xl doodle-font text-[#FBBF24] mb-8 animate-bounce text-center drop-shadow-[0_4px_4px_rgba(0,0,0,0.5)]">UPDATE 2.0<br>COMING SOON</h2>
+            <div class="flex flex-col gap-6 text-center text-white ui-font text-2xl md:text-4xl font-bold max-w-3xl">
+                <div class="opacity-0 transition-all duration-1000 transform translate-y-4" id="reveal1">🌄 NEW NOTEBOOK ENVIRONMENTS</div>
+                <div class="opacity-0 transition-all duration-1000 transform translate-y-4" id="reveal2">🖋️ DEADLY PEN & MARKER OBSTACLES</div>
+                <div class="opacity-0 transition-all duration-1000 transform translate-y-4 text-[#F472B6] text-4xl md:text-6xl mt-4 drop-shadow-[0_0_20px_rgba(244,114,182,0.8)] leading-tight" id="reveal3">
+                    🐉 MASSIVE BOSS FIGHTS:<br>THE GIANT ERASER!
+                </div>
+            </div>
+            <button id="closeTeaserBtn" class="opacity-0 transition-opacity duration-1000 mt-12 ui-font text-xl font-bold bg-[#34D399] text-[#1E3A8A] py-3 px-10 rounded-full border-4 border-[#1E3A8A] hover:bg-[#10B981] shadow-[6px_6px_0px_#1E3A8A] active:translate-y-1 active:shadow-[0px_0px_0px_#1E3A8A]">
+                HYPE!
+            </button>
+        </div>
+
+    </div>
+
+<script>
+    /**
+     * DOODLE GLIDER - HTML5 Canvas Game
+     * A cozy, physics-based infinite runner.
+     */
+
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d', { alpha: false }); // Optimize
+    
+    // UI Elements
+    const startScreen = document.getElementById('startScreen');
+    const gameOverScreen = document.getElementById('gameOverScreen');
+    const shopScreen = document.getElementById('shopScreen');
+    const hud = document.getElementById('hud');
+    const scoreDisplay = document.getElementById('scoreDisplay');
+    const sessionStarDisplay = document.getElementById('sessionStarDisplay');
+    const finalScoreDisplay = document.getElementById('finalScore');
+    const bestScoreDisplay = document.getElementById('bestScore');
+    const finalStarsDisplay = document.getElementById('finalStars');
+    const totalStarsDisplay = document.getElementById('totalStarsDisplay');
+    const shopStarsDisplay = document.getElementById('shopStarsDisplay');
+    const startBtn = document.getElementById('startBtn');
+    const restartBtn = document.getElementById('restartBtn');
+    const shopBtn = document.getElementById('shopBtn');
+    const goShopBtn = document.getElementById('goShopBtn');
+    const closeShopBtn = document.getElementById('closeShopBtn');
+    const shopItemsContainer = document.getElementById('shopItemsContainer');
+
+    // Teaser UI Elements
+    const teaserScreen = document.getElementById('teaserScreen');
+    const teaserBtn = document.getElementById('teaserBtn');
+    const countdownDisplay = document.getElementById('countdown');
+    const closeTeaserBtn = document.getElementById('closeTeaserBtn');
+
+    // Game Constants & Configuration
+    const CONFIG = {
+        bgColor: '#F4F1EA',
+        gridColor: 'rgba(147, 197, 253, 0.4)', // Faint blue
+        inkColor: '#1E3A8A', // Dark blue ink
+        pencilWood: '#FBBF24',
+        pencilLead: '#334155',
+        pencilEraser: '#F472B6',
+        pencilMetal: '#94A3B8',
+        starColor: '#FBBF24',
+        shieldColor: '#3B82F6',
+        magnetColor: '#E74C3C',
+        gravity: 0.25,
+        lift: -6.5,
+        baseSpeed: 3.5, // Starting Horizontal speed
+        gapSize: 220,
+        powerupDuration: 400 // frames
+    };
+
+    // Shop Configuration
+    const SKINS = {
+        'classic': { name: 'Classic Blue', cost: 0, fill: '#FFFFFF', stroke: '#1E3A8A' },
+        'red_ink': { name: 'Teacher\'s Red', cost: 10, fill: '#FFFFFF', stroke: '#E74C3C' },
+        'green_ink': { name: 'Minty Green', cost: 15, fill: '#FFFFFF', stroke: '#10B981' },
+        'gold_foil': { name: 'Gold Foil', cost: 50, fill: '#FDE68A', stroke: '#D97706' },
+        'stealth': { name: 'Midnight', cost: 100, fill: '#1E293B', stroke: '#94A3B8' }
+    };
+
+    // State Variables
+    let width, height;
+    let frames = 0;
+    let score = 0;
+    let sessionStars = 0;
+    let nextObstacleFrame = 100; 
+    let highScore = localStorage.getItem('doodleGliderBest') || 0;
+    
+    // Save Data functionality variables
+    let totalStars = parseInt(localStorage.getItem('doodleGliderStars')) || 0;
+    let unlockedSkins = JSON.parse(localStorage.getItem('doodleGliderSkins')) || ['classic'];
+    let currentSkin = localStorage.getItem('doodleGliderCurrentSkin') || 'classic';
+
+    let currentState = 'START'; // START, PLAYING, GAMEOVER, SHOP
+    let animationId;
+    let backgroundOffset = 0;
+    let currentSpeed = CONFIG.baseSpeed;
+    let screenShake = 0;
+
+    let activePowerups = {
+        shield: 0,
+        magnet: 0
+    };
+
+    // Game Objects
+    let player;
+    let obstacles = [];
+    let particles = [];
+    let stars = [];
+    let powerups = [];
+    let clouds = [];
+    let flightPath = []; // Trail behind the plane
+
+    // ----------------------------------------------------
+    // UTILS & SETUP
+    // ----------------------------------------------------
+
+    function resize() {
+        width = window.innerWidth;
+        height = window.innerHeight;
+        // Handle high-DPI displays for crisp rendering
+        const dpr = window.devicePixelRatio || 1;
+        canvas.width = width * dpr;
+        canvas.height = height * dpr;
+        ctx.scale(dpr, dpr);
+        
+        // Adjust gap size slightly for smaller screens
+        CONFIG.gapSize = height < 600 ? 200 : 250;
+    }
+
+    window.addEventListener('resize', resize);
+    resize();
+
+    // ----------------------------------------------------
+    // CLASSES
+    // ----------------------------------------------------
+
+    class Player {
+        constructor() {
+            this.x = width * 0.25;
+            this.y = height / 2;
+            this.velocity = 0;
+            this.radius = 16;
+            this.rotation = 0;
+        }
+
+        update() {
+            this.velocity += CONFIG.gravity;
+            this.y += this.velocity;
+            
+            // Powerup Timers
+            if (activePowerups.shield > 0) {
+                activePowerups.shield--;
+                if (activePowerups.shield === 0) document.getElementById('shieldIndicator').classList.add('hidden');
+            }
+            if (activePowerups.magnet > 0) {
+                activePowerups.magnet--;
+                if (activePowerups.magnet === 0) document.getElementById('magnetIndicator').classList.add('hidden');
+            }
+            
+            // Calculate rotation based on velocity
+            // Limit rotation between looking up and diving
+            const targetRotation = Math.min(Math.PI / 4, Math.max(-Math.PI / 4, (this.velocity * 0.1)));
+            this.rotation += (targetRotation - this.rotation) * 0.15; // Smooth transition
+
+            // Floor/Ceiling collision
+            if (this.y >= height - this.radius || this.y <= this.radius) {
+                gameOver();
+            }
+
+            // Record path for trail
+            if (frames % 4 === 0) {
+                flightPath.push({ x: this.x, y: this.y });
+                if (flightPath.length > 20) flightPath.shift();
+            }
+        }
+
+        flap() {
+            this.velocity = CONFIG.lift;
+            // Create some puff particles on flap
+            for(let i=0; i<3; i++){
+                particles.push(new Particle(this.x - 10, this.y, 'puff'));
+            }
+        }
+
+        draw() {
+            ctx.save();
+            ctx.translate(this.x, this.y);
+            ctx.rotate(this.rotation);
+
+            const skin = SKINS[currentSkin] || SKINS['classic'];
+
+            // Draw Paper Airplane
+            ctx.beginPath();
+            ctx.lineJoin = 'round';
+            ctx.lineCap = 'round';
+            ctx.lineWidth = 3;
+            ctx.strokeStyle = skin.stroke;
+            ctx.fillStyle = skin.fill;
+
+            // Plane shape
+            ctx.moveTo(20, 0); // Nose
+            ctx.lineTo(-15, -12); // Top wing tip
+            ctx.lineTo(-8, 0); // Back center
+            ctx.lineTo(-15, 12); // Bottom wing tip
+            ctx.closePath();
+            
+            ctx.fill();
+            ctx.stroke();
+
+            // Inner fold line
+            ctx.beginPath();
+            ctx.moveTo(20, 0);
+            ctx.lineTo(-8, 0);
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Draw Shield Aura if active
+            if (activePowerups.shield > 0) {
+                ctx.beginPath();
+                ctx.arc(0, 0, this.radius + 15, 0, Math.PI * 2);
+                ctx.strokeStyle = CONFIG.shieldColor;
+                ctx.lineWidth = 3;
+                ctx.setLineDash([8, 8]);
+                ctx.lineDashOffset = -frames * 0.5; // Spin effect
+                ctx.globalAlpha = (activePowerups.shield < 60 && activePowerups.shield % 10 < 5) ? 0.3 : 0.8; // Blink before expiring
+                ctx.stroke();
+                ctx.setLineDash([]);
+                ctx.globalAlpha = 1.0;
+            }
+
+            // Draw Magnet Aura if active
+            if (activePowerups.magnet > 0) {
+                ctx.beginPath();
+                ctx.arc(0, 0, this.radius + 25, 0, Math.PI * 2);
+                ctx.strokeStyle = CONFIG.magnetColor;
+                ctx.lineWidth = 1;
+                ctx.globalAlpha = (Math.sin(frames * 0.1) + 1) * 0.25; // Pulsing effect
+                ctx.stroke();
+                ctx.globalAlpha = 1.0;
+            }
+
+            ctx.restore();
+        }
+    }
+
+    class Obstacle {
+        constructor(x) {
+            this.x = x;
+            this.width = 40;
+            
+            // Randomize the gap position
+            const minPencilHeight = 100;
+            const maxPos = height - minPencilHeight - CONFIG.gapSize;
+            this.topHeight = Math.max(minPencilHeight, Math.random() * maxPos);
+            this.bottomY = this.topHeight + CONFIG.gapSize;
+            
+            this.passed = false;
+            this.destroyed = false; // For shield impacts
+        }
+
+        update() {
+            if (this.destroyed) return;
+            this.x -= currentSpeed;
+
+            // Score check
+            if (!this.passed && this.x + this.width < player.x) {
+                score++;
+                this.passed = true;
+                scoreDisplay.innerText = score;
+                
+                // Speed up slightly every 10 points
+                if (score % 10 === 0) {
+                    currentSpeed = Math.min(currentSpeed + 0.5, 7.0); // Cap speed at 7.0
+                    // Burst particles to indicate speed up
+                    for(let i=0; i<10; i++) particles.push(new Particle(player.x, player.y, 'score'));
+                }
+
+                // Burst effect on score
+                for(let i=0; i<5; i++){
+                    particles.push(new Particle(player.x, player.y, 'score'));
+                }
+            }
+
+            // Collision Check (AABB)
+            const padding = 10; // Forgiving hitboxes
+            const pLeft = player.x - player.radius + padding;
+            const pRight = player.x + player.radius - padding;
+            const pTop = player.y - player.radius + padding;
+            const pBottom = player.y + player.radius - padding;
+
+            if (pRight > this.x && pLeft < this.x + this.width) {
+                if (pTop < this.topHeight || pBottom > this.bottomY) {
+                    // Hit!
+                    if (activePowerups.shield > 0) {
+                        // Shield Break!
+                        activePowerups.shield = 0;
+                        this.destroyed = true;
+                        document.getElementById('shieldIndicator').classList.add('hidden');
+                        
+                        // massive explosion of wood and lead
+                        for(let i=0; i<20; i++){
+                            particles.push(new Particle(player.x, player.y, 'wood'));
+                            particles.push(new Particle(player.x, player.y, 'puff'));
+                        }
+                    } else {
+                        gameOver();
+                    }
+                }
+            }
+        }
+
+        drawPencil(x, y, w, h, isTop) {
+            ctx.save();
+            ctx.translate(x, y);
+            
+            ctx.lineWidth = 3;
+            ctx.strokeStyle = CONFIG.inkColor;
+            ctx.lineJoin = 'round';
+
+            // Wood body
+            ctx.fillStyle = CONFIG.pencilWood;
+            if (isTop) {
+                // Pencil pointing down
+                // Body
+                ctx.fillRect(0, 0, w, h - 30);
+                ctx.strokeRect(0, 0, w, h - 30);
+                
+                // Lines on body
+                ctx.beginPath(); ctx.moveTo(w*0.3, 0); ctx.lineTo(w*0.3, h-30); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(w*0.7, 0); ctx.lineTo(w*0.7, h-30); ctx.stroke();
+
+                // Tip (Wood)
+                ctx.fillStyle = '#FDE68A'; // lighter wood
+                ctx.beginPath();
+                ctx.moveTo(0, h-30);
+                ctx.lineTo(w/2, h);
+                ctx.lineTo(w, h-30);
+                ctx.fill(); ctx.stroke();
+
+                // Lead
+                ctx.fillStyle = CONFIG.pencilLead;
+                ctx.beginPath();
+                ctx.moveTo(w*0.35, h-9);
+                ctx.lineTo(w/2, h);
+                ctx.lineTo(w*0.65, h-9);
+                ctx.fill(); ctx.stroke();
+                
+            } else {
+                // Pencil pointing up
+                // Body
+                ctx.fillRect(0, 30, w, h - 30);
+                ctx.strokeRect(0, 30, w, h - 30);
+
+                // Lines on body
+                ctx.beginPath(); ctx.moveTo(w*0.3, 30); ctx.lineTo(w*0.3, h); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(w*0.7, 30); ctx.lineTo(w*0.7, h); ctx.stroke();
+
+                // Tip (Wood)
+                ctx.fillStyle = '#FDE68A';
+                ctx.beginPath();
+                ctx.moveTo(0, 30);
+                ctx.lineTo(w/2, 0);
+                ctx.lineTo(w, 30);
+                ctx.fill(); ctx.stroke();
+
+                // Lead
+                ctx.fillStyle = CONFIG.pencilLead;
+                ctx.beginPath();
+                ctx.moveTo(w*0.35, 9);
+                ctx.lineTo(w/2, 0);
+                ctx.lineTo(w*0.65, 9);
+                ctx.fill(); ctx.stroke();
+            }
+
+            ctx.restore();
+        }
+
+        draw() {
+            if (this.destroyed) return;
+            // Top pencil
+            this.drawPencil(this.x, 0, this.width, this.topHeight, true);
+            // Bottom pencil
+            this.drawPencil(this.x, this.bottomY, this.width, height - this.bottomY, false);
+        }
+    }
+
+    class PowerUp {
+        constructor(x, y, type) {
+            this.x = x;
+            this.y = y;
+            this.radius = 16;
+            this.type = type; // 'shield' or 'magnet'
+            this.collected = false;
+            this.bobOffset = Math.random() * Math.PI * 2;
+        }
+
+        update() {
+            this.x -= currentSpeed;
+            
+            const dist = Math.hypot(player.x - this.x, player.y - this.y);
+            if (dist < player.radius + this.radius && !this.collected) {
+                this.collected = true;
+                
+                // Activate
+                activePowerups[this.type] = CONFIG.powerupDuration;
+                document.getElementById(this.type + 'Indicator').classList.remove('hidden');
+                
+                // FX
+                for(let i=0; i<10; i++){
+                    particles.push(new Particle(this.x, this.y, this.type));
+                }
+            }
+        }
+
+        draw() {
+            if (this.collected) return;
+            
+            const yPos = this.y + Math.sin(frames * 0.05 + this.bobOffset) * 15;
+            
+            ctx.save();
+            ctx.translate(this.x, yPos);
+            
+            ctx.lineWidth = 2;
+            ctx.fillStyle = '#FFFFFF';
+            ctx.strokeStyle = CONFIG.inkColor;
+            
+            // Draw bubble/circle base
+            ctx.beginPath();
+            ctx.arc(0, 0, this.radius, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+
+            // Draw Icon inside
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.font = '18px sans-serif';
+            ctx.fillText(this.type === 'shield' ? '🛡️' : '🧲', 0, 0);
+
+            ctx.restore();
+        }
+    }
+
+    class Cloud {
+        constructor() {
+            this.x = width + Math.random() * 200;
+            this.y = Math.random() * (height * 0.6);
+            this.speed = (Math.random() * 0.5 + 0.2); // Slower parallax speed
+            this.scale = Math.random() * 0.5 + 0.5;
+            
+            // Generate a random bumpy cloud shape once
+            this.bumps = [];
+            let numBumps = Math.floor(Math.random() * 4) + 4;
+            for(let i=0; i<numBumps; i++) {
+                this.bumps.push({
+                    ox: (Math.random() - 0.5) * 60,
+                    oy: (Math.random() - 0.5) * 20,
+                    r: Math.random() * 20 + 20
+                });
+            }
+        }
+
+        update() {
+            // Parallax moves relative to current game speed
+            this.x -= currentSpeed * this.speed;
+        }
+
+        draw() {
+            ctx.save();
+            ctx.translate(this.x, this.y);
+            ctx.scale(this.scale, this.scale);
+
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+            ctx.strokeStyle = 'rgba(30, 58, 138, 0.3)'; // Faint ink
+            ctx.lineWidth = 2;
+            ctx.lineJoin = 'round';
+            ctx.lineCap = 'round';
+
+            // Draw cloud bumps
+            ctx.beginPath();
+            for(let b of this.bumps) {
+                ctx.moveTo(b.ox + b.r, b.oy);
+                ctx.arc(b.ox, b.oy, b.r, 0, Math.PI * 2);
+            }
+            ctx.fill();
+            ctx.stroke();
+
+            // Add a few scribble lines inside
+            ctx.beginPath();
+            ctx.moveTo(-15, 5); ctx.lineTo(15, 5);
+            ctx.moveTo(-10, 12); ctx.lineTo(10, 12);
+            ctx.stroke();
+
+            ctx.restore();
+        }
+    }
+
+
+    class Star {
+        constructor(x, y) {
+            this.x = x;
+            this.y = y;
+            this.radius = 12;
+            this.collected = false;
+            this.bobOffset = Math.random() * Math.PI * 2;
+        }
+
+        update() {
+            this.x -= currentSpeed;
+            
+            // Magnet Powerup Logic!
+            if (activePowerups.magnet > 0 && !this.collected) {
+                const distToPlayer = Math.hypot(player.x - this.x, player.y - this.y);
+                if (distToPlayer < 250) {
+                    // Suck towards player
+                    const angle = Math.atan2(player.y - this.y, player.x - this.x);
+                    this.x += Math.cos(angle) * 8;
+                    this.y += Math.sin(angle) * 8;
+                }
+            }
+            
+            // Collection check
+            const dist = Math.hypot(player.x - this.x, player.y - this.y);
+            if (dist < player.radius + this.radius && !this.collected) {
+                this.collected = true;
+                sessionStars += 1; // Update session stars instead of flat score
+                sessionStarDisplay.innerText = sessionStars;
+                
+                // Explosion particles
+                for(let i=0; i<8; i++){
+                    particles.push(new Particle(this.x, this.y, 'star'));
+                }
+            }
+        }
+
+        draw() {
+            if (this.collected) return;
+
+            const yPos = this.y + Math.sin(frames * 0.05 + this.bobOffset) * 10;
+
+            ctx.save();
+            ctx.translate(this.x, yPos);
+            ctx.rotate(frames * 0.02);
+            
+            ctx.fillStyle = CONFIG.starColor;
+            ctx.strokeStyle = CONFIG.inkColor;
+            ctx.lineWidth = 2;
+            ctx.lineJoin = 'round';
+
+            // Draw 5-pointed star
+            ctx.beginPath();
+            for (let i = 0; i < 5; i++) {
+                ctx.lineTo(Math.cos((18 + i * 72) / 180 * Math.PI) * this.radius,
+                           -Math.sin((18 + i * 72) / 180 * Math.PI) * this.radius);
+                ctx.lineTo(Math.cos((54 + i * 72) / 180 * Math.PI) * (this.radius * 0.4),
+                           -Math.sin((54 + i * 72) / 180 * Math.PI) * (this.radius * 0.4));
+            }
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+
+            ctx.restore();
+        }
+    }
+
+    class Particle {
+        constructor(x, y, type) {
+            this.x = x;
+            this.y = y;
+            this.type = type; // 'puff', 'star', 'score'
+            this.life = 1;
+            this.decay = Math.random() * 0.03 + 0.02;
+            
+            const angle = Math.random() * Math.PI * 2;
+            const speed = Math.random() * 3 + 1;
+            
+            if (type === 'puff') {
+                this.vx = -Math.random() * 2 - 1; // move mostly left behind plane
+                this.vy = (Math.random() - 0.5) * 2;
+                this.size = Math.random() * 4 + 2;
+                this.decay = 0.05;
+            } else {
+                this.vx = Math.cos(angle) * speed;
+                this.vy = Math.sin(angle) * speed;
+                this.size = Math.random() * 5 + 3;
+            }
+        }
+
+        update() {
+            // Apply world scroll to particles too
+            this.x += this.vx - (currentSpeed * 0.2);
+            this.y += this.vy;
+            this.life -= this.decay;
+        }
+
+        draw() {
+            ctx.save();
+            ctx.globalAlpha = Math.max(0, this.life);
+            
+            if (this.type === 'puff') {
+                ctx.fillStyle = '#94A3B8'; // greyish puff
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            } else if (this.type === 'star') {
+                ctx.fillStyle = CONFIG.starColor;
+                ctx.fillRect(this.x - this.size/2, this.y - this.size/2, this.size, this.size);
+            } else if (this.type === 'wood') {
+                ctx.fillStyle = CONFIG.pencilWood;
+                ctx.fillRect(this.x - this.size/2, this.y - this.size/2, this.size, this.size);
+            } else if (this.type === 'shield') {
+                ctx.fillStyle = CONFIG.shieldColor;
+                ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI*2); ctx.fill();
+            } else if (this.type === 'magnet') {
+                ctx.fillStyle = CONFIG.magnetColor;
+                ctx.fillRect(this.x - this.size/2, this.y - this.size/2, this.size, this.size);
+            } else if (this.type === 'score') {
+                ctx.fillStyle = CONFIG.inkColor;
+                ctx.font = '12px Nunito, sans-serif';
+                ctx.fillText('+1', this.x, this.y);
+            }
+            
+            ctx.restore();
+        }
+    }
+
+    // ----------------------------------------------------
+    // GAME LOGIC
+    // ----------------------------------------------------
+
+    function initGame() {
+        player = new Player();
+        obstacles = [];
+        particles = [];
+        stars = [];
+        powerups = [];
+        clouds = [];
+        flightPath = [];
+        score = 0;
+        sessionStars = 0;
+        frames = 0;
+        currentSpeed = CONFIG.baseSpeed;
+        nextObstacleFrame = 60; // Initial gap before first pipe
+        activePowerups = { shield: 0, magnet: 0 };
+        screenShake = 0;
+        
+        scoreDisplay.innerText = '0';
+        sessionStarDisplay.innerText = '0';
+        document.getElementById('shieldIndicator').classList.add('hidden');
+        document.getElementById('magnetIndicator').classList.add('hidden');
+
+        // Pre-spawn some clouds
+        for(let i=0; i<4; i++){
+            let c = new Cloud();
+            c.x = Math.random() * width;
+            clouds.push(c);
+        }
+    }
+
+    function drawBackground() {
+        ctx.fillStyle = CONFIG.bgColor;
+        ctx.fillRect(0, 0, width, height);
+
+        // Draw Graph Paper Lines (Pan slightly to give speed sensation)
+        ctx.lineWidth = 1;
+        ctx.strokeStyle = CONFIG.gridColor;
+        
+        backgroundOffset = (backgroundOffset - (currentSpeed * 0.3)) % 40;
+
+        ctx.beginPath();
+        // Vertical lines
+        for (let x = backgroundOffset; x < width; x += 40) {
+            ctx.moveTo(x, 0);
+            ctx.lineTo(x, height);
+        }
+        // Horizontal lines (static)
+        for (let y = 0; y < height; y += 40) {
+            ctx.moveTo(0, y);
+            ctx.lineTo(width, y);
+        }
+        ctx.stroke();
+
+        // Draw marginal line (red vertical line typical on lined paper)
+        ctx.strokeStyle = 'rgba(239, 68, 68, 0.2)';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        let marginX = (width * 0.1 + backgroundOffset * 0.5) % (width + 100);
+        if (marginX < 0) marginX += (width + 100); // Keep it wrapping
+        ctx.moveTo(marginX, 0);
+        ctx.lineTo(marginX, height);
+        ctx.stroke();
+
+        // Draw Clouds
+        for(let cloud of clouds) {
+            cloud.draw();
+        }
+    }
+
+    function drawFlightPath() {
+        if (flightPath.length < 2) return;
+        
+        ctx.beginPath();
+        ctx.moveTo(flightPath[0].x, flightPath[0].y);
+        for (let i = 1; i < flightPath.length; i++) {
+            ctx.lineTo(flightPath[i].x, flightPath[i].y);
+        }
+        
+        // Connect to current player pos
+        ctx.lineTo(player.x, player.y);
+
+        const skin = SKINS[currentSkin] || SKINS['classic'];
+        ctx.strokeStyle = skin.stroke; // Match trail to skin color
+        ctx.globalAlpha = 0.3;
+        ctx.lineWidth = 2;
+        ctx.setLineDash([5, 10]); // Dashed line
+        ctx.lineJoin = 'round';
+        ctx.stroke();
+        ctx.setLineDash([]); // Reset
+        ctx.globalAlpha = 1.0;
+        
+        // Move trail points left to match camera
+        for (let pt of flightPath) {
+            pt.x -= currentSpeed;
+        }
+    }
+
+    function savePlayerData() {
+        localStorage.setItem('doodleGliderBest', highScore);
+        localStorage.setItem('doodleGliderStars', totalStars);
+        localStorage.setItem('doodleGliderSkins', JSON.stringify(unlockedSkins));
+        localStorage.setItem('doodleGliderCurrentSkin', currentSkin);
+        
+        // Update UI displays
+        totalStarsDisplay.innerText = totalStars;
+        shopStarsDisplay.innerText = totalStars;
+    }
+
+    function gameOver() {
+        currentState = 'GAMEOVER';
+        screenShake = 20; // Trigger massive screen shake on death
+        
+        if (score > highScore) {
+            highScore = score;
+        }
+        
+        // Add collected stars to total and save everything
+        totalStars += sessionStars;
+        savePlayerData();
+
+        finalScoreDisplay.innerText = score;
+        bestScoreDisplay.innerText = highScore;
+        finalStarsDisplay.innerText = sessionStars;
+
+        hud.classList.add('hidden');
+        gameOverScreen.classList.remove('hidden');
+    }
+
+    function gameLoop() {
+        // Handle Screen Shake
+        let dx = 0;
+        let dy = 0;
+        if (screenShake > 0) {
+            dx = (Math.random() - 0.5) * screenShake;
+            dy = (Math.random() - 0.5) * screenShake;
+            screenShake *= 0.9; // dampening
+            if (screenShake < 0.5) screenShake = 0;
+        }
+        
+        ctx.save();
+        ctx.translate(dx, dy);
+
+        // Clear & Draw BG
+        drawBackground();
+
+        if (currentState === 'PLAYING') {
+            
+            // Cloud Spawning & Updating
+            if (Math.random() < 0.01) clouds.push(new Cloud());
+            for (let i = clouds.length - 1; i >= 0; i--) {
+                clouds[i].update();
+                if (clouds[i].x < -200) clouds.splice(i, 1);
+            }
+
+            // Update & Draw Trail
+            drawFlightPath();
+
+            // Spawn Obstacles (Randomized placement)
+            if (frames >= nextObstacleFrame) {
+                obstacles.push(new Obstacle(width));
+                
+                // Adjust gap spacing relative to current speed to prevent impossible jumps
+                let spacingBoost = (currentSpeed - CONFIG.baseSpeed) * 15;
+                nextObstacleFrame = frames + Math.floor(Math.random() * 50) + 70 + spacingBoost;
+                
+                const lastObs = obstacles[obstacles.length-1];
+                const gapCenterY = lastObs.topHeight + (CONFIG.gapSize / 2);
+
+                // Spawning Logic for Extras (Stars or Powerups)
+                const rand = Math.random();
+                if (rand < 0.05 && (activePowerups.shield === 0 || activePowerups.magnet === 0)) {
+                    // 5% chance for a Powerup (if we don't have it active)
+                    const type = Math.random() < 0.5 ? 'shield' : 'magnet';
+                    powerups.push(new PowerUp(width + 20, gapCenterY, type));
+                } else if (rand < 0.5) {
+                    // 45% chance for a Star
+                    stars.push(new Star(width + 20, gapCenterY));
+                }
+            }
+
+            // Update & Draw Obstacles
+            for (let i = obstacles.length - 1; i >= 0; i--) {
+                obstacles[i].update();
+                obstacles[i].draw();
+                if (obstacles[i].x + obstacles[i].width < 0) {
+                    obstacles.splice(i, 1);
+                }
+            }
+
+            // Update & Draw Stars
+            for (let i = stars.length - 1; i >= 0; i--) {
+                stars[i].update();
+                stars[i].draw();
+                if (stars[i].x + stars[i].radius < 0 || stars[i].collected) {
+                    stars.splice(i, 1);
+                }
+            }
+
+            // Update & Draw Powerups
+            for (let i = powerups.length - 1; i >= 0; i--) {
+                powerups[i].update();
+                powerups[i].draw();
+                if (powerups[i].x + powerups[i].radius < 0 || powerups[i].collected) {
+                    powerups.splice(i, 1);
+                }
+            }
+
+            // Update & Draw Player
+            player.update();
+            player.draw();
+
+            frames++;
+        } else if (currentState === 'GAMEOVER') {
+            // Just draw everything static
+            drawFlightPath();
+            obstacles.forEach(obs => obs.draw());
+            stars.forEach(s => s.draw());
+            powerups.forEach(p => p.draw());
+            player.draw();
+        }
+
+        // Update & Draw Particles (active in all states)
+        for (let i = particles.length - 1; i >= 0; i--) {
+            particles[i].update();
+            particles[i].draw();
+            if (particles[i].life <= 0) {
+                particles.splice(i, 1);
+            }
+        }
+
+        ctx.restore(); // Restore from screen shake
+        animationId = requestAnimationFrame(gameLoop);
+    }
+
+    // ----------------------------------------------------
+    // INPUT HANDLING & SHOP LOGIC
+    // ----------------------------------------------------
+    
+    function handleAction(e) {
+        // Prevent default spacebar scrolling or double tap zooming
+        if(e.type === 'keydown' && e.code !== 'Space') return;
+        if(e.type !== 'mousedown' && e.type !== 'touchstart') e.preventDefault(); 
+
+        // Ignore canvas inputs if interacting with UI overlays
+        if (currentState === 'SHOP') return;
+
+        if (currentState === 'PLAYING') {
+            player.flap();
+        }
+    }
+
+    function startGame() {
+        initGame();
+        currentState = 'PLAYING';
+        startScreen.classList.add('hidden');
+        gameOverScreen.classList.add('hidden');
+        shopScreen.classList.add('hidden');
+        hud.classList.remove('hidden');
+    }
+
+    function openShop() {
+        currentState = 'SHOP';
+        startScreen.classList.add('hidden');
+        gameOverScreen.classList.add('hidden');
+        shopScreen.classList.remove('hidden');
+        renderShop();
+    }
+
+    function closeShop() {
+        currentState = 'START';
+        shopScreen.classList.add('hidden');
+        startScreen.classList.remove('hidden');
+        savePlayerData(); // Update displays on start screen
+    }
+
+    function renderShop() {
+        shopItemsContainer.innerHTML = ''; // clear
+        
+        Object.keys(SKINS).forEach(key => {
+            const skin = SKINS[key];
+            const isUnlocked = unlockedSkins.includes(key);
+            const isEquipped = currentSkin === key;
+            
+            const itemDiv = document.createElement('div');
+            itemDiv.className = 'flex items-center justify-between p-3 border-2 border-slate-300 rounded-xl bg-white';
+            
+            // Icon preview
+            const iconHTML = `<div class="w-10 h-10 rounded-full border-2 flex items-center justify-center shadow-inner" style="background-color: ${skin.fill}; border-color: ${skin.stroke};">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="${skin.stroke}" stroke-width="2"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+            </div>`;
+
+            let actionBtnHTML = '';
+            if (isEquipped) {
+                actionBtnHTML = `<button disabled class="ui-font font-bold px-4 py-1.5 rounded-full bg-slate-200 text-slate-500 cursor-not-allowed">Equipped</button>`;
+            } else if (isUnlocked) {
+                actionBtnHTML = `<button onclick="equipSkin('${key}')" class="ui-font font-bold px-4 py-1.5 rounded-full bg-[#34D399] text-[#1E3A8A] border-2 border-[#1E3A8A] hover:-translate-y-0.5 transition-transform shadow-[2px_2px_0px_#1E3A8A] active:translate-y-0 active:shadow-none">Equip</button>`;
+            } else {
+                const canAfford = totalStars >= skin.cost;
+                actionBtnHTML = `<button onclick="buySkin('${key}')" ${!canAfford ? 'disabled' : ''} class="ui-font font-bold px-4 py-1.5 rounded-full ${canAfford ? 'bg-[#FBBF24] text-[#1E3A8A] border-2 border-[#1E3A8A] hover:-translate-y-0.5 shadow-[2px_2px_0px_#1E3A8A] active:translate-y-0 active:shadow-none' : 'bg-slate-200 text-slate-400 border-2 border-slate-300 cursor-not-allowed'} transition-transform flex items-center gap-1">
+                    ⭐ ${skin.cost}
+                </button>`;
+            }
+
+            itemDiv.innerHTML = `
+                <div class="flex items-center gap-3">
+                    ${iconHTML}
+                    <span class="ui-font font-bold text-slate-700">${skin.name}</span>
+                </div>
+                ${actionBtnHTML}
+            `;
+            
+            shopItemsContainer.appendChild(itemDiv);
+        });
+    }
+
+    // Window exposure for inline onclick handlers
+    window.equipSkin = function(key) {
+        currentSkin = key;
+        savePlayerData();
+        renderShop();
+    };
+
+    window.buySkin = function(key) {
+        const skin = SKINS[key];
+        if (totalStars >= skin.cost && !unlockedSkins.includes(key)) {
+            totalStars -= skin.cost;
+            unlockedSkins.push(key);
+            currentSkin = key; // Auto equip
+            savePlayerData();
+            renderShop();
+        }
+    };
+
+    // Bind inputs
+    window.addEventListener('keydown', handleAction);
+    canvas.addEventListener('mousedown', handleAction);
+    canvas.addEventListener('touchstart', handleAction, { passive: false });
+    
+    startBtn.addEventListener('click', startGame);
+    restartBtn.addEventListener('click', startGame);
+    shopBtn.addEventListener('click', openShop);
+    goShopBtn.addEventListener('click', openShop);
+    closeShopBtn.addEventListener('click', closeShop);
+
+    // ----------------------------------------------------
+    // TEASER LOGIC (The "Wink Wink" Scripted Event)
+    // ----------------------------------------------------
+    
+    // Check if we already have a target date saved offline
+    let targetDate = localStorage.getItem('doodleGliderEventDate');
+    if (!targetDate) {
+        // Exactly 1 day and 5 hours from first load
+        targetDate = new Date().getTime() + (29 * 60 * 60 * 1000); 
+        localStorage.setItem('doodleGliderEventDate', targetDate);
+    } else {
+        targetDate = parseInt(targetDate, 10);
+    }
+
+    function updateCountdown() {
+        const now = new Date().getTime();
+        const distance = targetDate - now;
+
+        if (distance < 0) {
+            countdownDisplay.innerText = "NOW!";
+            return;
+        }
+
+        const hours = Math.floor(distance / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0');
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000).toString().padStart(2, '0');
+
+        countdownDisplay.innerText = `${hours}:${minutes}:${seconds}`;
+    }
+    
+    setInterval(updateCountdown, 1000);
+    updateCountdown();
+
+    let fireworksInterval;
+
+    function showTeaser() {
+        teaserScreen.classList.remove('hidden');
+        
+        // Trigger timed reveals with a smooth slide-up effect
+        setTimeout(() => {
+            const r1 = document.getElementById('reveal1');
+            r1.classList.remove('opacity-0', 'translate-y-4');
+            r1.classList.add('opacity-100', 'translate-y-0');
+        }, 800);
+        
+        setTimeout(() => {
+            const r2 = document.getElementById('reveal2');
+            r2.classList.remove('opacity-0', 'translate-y-4');
+            r2.classList.add('opacity-100', 'translate-y-0');
+        }, 2500);
+        
+        setTimeout(() => {
+            const r3 = document.getElementById('reveal3');
+            r3.classList.remove('opacity-0', 'translate-y-4');
+            r3.classList.add('opacity-100', 'translate-y-0');
+            // Epic screen shake effect on the game canvas behind the teaser!
+            screenShake = 40; 
+        }, 4500);
+
+        setTimeout(() => {
+            document.getElementById('closeTeaserBtn').classList.remove('opacity-0');
+        }, 6500);
+        
+        // Firework particles in the background canvas to build hype
+        fireworksInterval = setInterval(() => {
+            if (teaserScreen.classList.contains('hidden')) {
+                clearInterval(fireworksInterval);
+                return;
+            }
+            // Spawn bursts of colorful particles around the screen
+            const x = width * 0.1 + Math.random() * (width * 0.8);
+            const y = height * 0.1 + Math.random() * (height * 0.8);
+            for(let i=0; i<30; i++) {
+                let p = new Particle(x, y, 'star'); 
+                p.vx = (Math.random() - 0.5) * 20;
+                p.vy = (Math.random() - 0.5) * 20;
+                p.life = 2.5; 
+                p.decay = 0.02; // Slower fade for fireworks
+                particles.push(p);
+            }
+        }, 400);
+    }
+
+    function closeTeaser() {
+        teaserScreen.classList.add('hidden');
+        clearInterval(fireworksInterval);
+        
+        // Reset reveals for the next time the button is clicked
+        ['reveal1', 'reveal2', 'reveal3'].forEach(id => {
+            const el = document.getElementById(id);
+            el.classList.add('opacity-0', 'translate-y-4');
+            el.classList.remove('opacity-100', 'translate-y-0');
+        });
+        document.getElementById('closeTeaserBtn').classList.add('opacity-0');
+    }
+
+    teaserBtn.addEventListener('click', showTeaser);
+    closeTeaserBtn.addEventListener('click', closeTeaser);
+
+    // ----------------------------------------------------
+    // INIT
+    // ----------------------------------------------------
+    
+    // Initial display update for loaded data
+    savePlayerData(); 
+    
+    // Draw initial background before game starts
+    drawBackground();
+    animationId = requestAnimationFrame(gameLoop);
+
+</script>
+</body>
+</html>

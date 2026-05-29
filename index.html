@@ -78,9 +78,14 @@
             <p class="text-slate-600 ui-font mb-4 text-center">Tap, Click, or Space to fly.</p>
             
             <!-- LIVE EVENT BUTTON -->
-            <button id="teaserBtn" class="mb-5 ui-font text-sm md:text-base font-bold bg-[#EF4444] text-white py-2 px-6 rounded-full border-2 border-[#1E3A8A] hover:bg-[#DC2626] transition-all shadow-[4px_4px_0px_#1E3A8A] active:translate-y-1 active:shadow-[0px_0px_0px_#1E3A8A] animate-pulse">
-                🚨 EVENT SNEAK PEEK IN: <span id="countdown">29:00:00</span> 🚨
-            </button>
+            <div class="flex flex-col items-center mb-5 gap-2 w-full">
+                <div class="ui-font text-xs font-bold text-slate-500 bg-slate-200 px-3 py-1 rounded-full text-center">
+                    ✅ Update 2.0 Installed (Sorry for the fake timer 😂)
+                </div>
+                <button id="teaserBtn" class="ui-font text-sm md:text-base font-bold bg-[#8B5CF6] text-white py-2 px-6 rounded-full border-2 border-[#1E3A8A] hover:bg-[#7C3AED] transition-all shadow-[4px_4px_0px_#1E3A8A] active:translate-y-1 active:shadow-[0px_0px_0px_#1E3A8A] animate-pulse w-full">
+                    🚀 UPDATE 3.0 (REAL TIMER): <span id="countdown">48:00:00</span> 🚀
+                </button>
+            </div>
 
             <div class="mb-6 flex items-center gap-2 bg-white/50 px-4 py-2 rounded-full border-2 border-slate-300">
                 <span class="text-2xl">⭐</span>
@@ -98,7 +103,7 @@
         </div>
 
         <!-- Shop Screen -->
-        <div id="shopScreen" class="hidden bg-[#F4F1EA] bg-opacity-95 p-6 rounded-2xl border-4 border-[#1E3A8A] shadow-[8px_8px_0px_#1E3A8A] flex flex-col items-center pointer-events-auto w-[90%] max-w-md max-h-[80%] overflow-y-auto">
+        <div id="shopScreen" class="hidden bg-[#F4F1EA] bg-opacity-95 p-6 rounded-2xl border-4 border-[#1E3A8A] shadow-[8px_8px_0px_#1E3A8A] flex flex-col items-center pointer-events-auto w-[95%] max-w-md max-h-[85%] overflow-hidden">
             <div class="w-full flex justify-between items-center mb-4">
                 <h2 class="text-4xl doodle-font text-[#1E3A8A]">Paper Shop</h2>
                 <div class="flex items-center gap-2 bg-white px-3 py-1 rounded-full border-2 border-slate-300">
@@ -106,12 +111,22 @@
                     <span id="shopStarsDisplay" class="ui-font font-bold text-lg text-slate-700">0</span>
                 </div>
             </div>
+
+            <!-- Tab Buttons -->
+            <div class="w-full flex gap-2 mb-4 bg-white/65 p-1 rounded-xl border-2 border-[#1E3A8A]">
+                <button id="tabPlanesBtn" class="flex-1 py-2 rounded-lg ui-font font-bold text-sm transition-all bg-[#1E3A8A] text-white">
+                    ✈️ Planes
+                </button>
+                <button id="tabObstaclesBtn" class="flex-1 py-2 rounded-lg ui-font font-bold text-sm transition-all text-slate-600 hover:bg-slate-100">
+                    ✏️ Obstacles
+                </button>
+            </div>
             
-            <div id="shopItemsContainer" class="w-full flex flex-col gap-3 mb-6">
+            <div id="shopItemsContainer" class="w-full flex flex-col gap-3 mb-6 overflow-y-auto pr-1 max-h-[280px]">
                 <!-- Shop items injected here by JS -->
             </div>
 
-            <button id="closeShopBtn" class="ui-font text-lg font-bold bg-slate-200 text-slate-700 py-2 px-8 rounded-full border-2 border-slate-400 hover:bg-slate-300 hover:-translate-y-1 transition-all shadow-[4px_4px_0px_slate-400] active:shadow-[0px_0px_0px_slate-400] active:translate-y-1">
+            <button id="closeShopBtn" class="ui-font text-lg font-bold bg-slate-200 text-slate-700 py-2 px-8 rounded-full border-2 border-slate-400 hover:bg-slate-300 hover:-translate-y-1 transition-all shadow-[4px_4px_0px_slate-400] active:shadow-[0px_0px_0px_slate-400] active:translate-y-1 shrink-0">
                 Close Shop
             </button>
         </div>
@@ -149,17 +164,17 @@
         </div>
 
         <!-- Teaser Show Screen (Hidden by Default) -->
-        <div id="teaserScreen" class="hidden absolute inset-0 z-50 bg-[#1E3A8A] bg-opacity-80 flex flex-col items-center justify-center pointer-events-auto backdrop-blur-sm transition-opacity duration-500 w-full h-full px-4">
-            <h2 class="text-6xl md:text-8xl doodle-font text-[#FBBF24] mb-8 animate-bounce text-center drop-shadow-[0_4px_4px_rgba(0,0,0,0.5)]">UPDATE 2.0<br>COMING SOON</h2>
+        <div id="teaserScreen" class="hidden absolute inset-0 z-50 bg-[#0F172A] bg-opacity-90 flex flex-col items-center justify-center pointer-events-auto backdrop-blur-sm transition-opacity duration-500 w-full h-full px-4">
+            <h2 class="text-6xl md:text-8xl doodle-font text-[#A855F7] mb-8 animate-pulse text-center drop-shadow-[0_4px_10px_rgba(168,85,247,0.8)]">UPDATE 3.0<br>IS COUNTING DOWN</h2>
             <div class="flex flex-col gap-6 text-center text-white ui-font text-2xl md:text-4xl font-bold max-w-3xl">
-                <div class="opacity-0 transition-all duration-1000 transform translate-y-4" id="reveal1">🌄 NEW NOTEBOOK ENVIRONMENTS</div>
-                <div class="opacity-0 transition-all duration-1000 transform translate-y-4" id="reveal2">🖋️ DEADLY PEN & MARKER OBSTACLES</div>
-                <div class="opacity-0 transition-all duration-1000 transform translate-y-4 text-[#F472B6] text-4xl md:text-6xl mt-4 drop-shadow-[0_0_20px_rgba(244,114,182,0.8)] leading-tight" id="reveal3">
-                    🐉 MASSIVE BOSS FIGHTS:<br>THE GIANT ERASER!
+                <div class="opacity-0 transition-all duration-1000 transform translate-y-4" id="reveal1">🌌 THE SPACE NOTEBOOK ENVIRONMENT</div>
+                <div class="opacity-0 transition-all duration-1000 transform translate-y-4" id="reveal2">🛸 ALIEN DOODLES & GLOWING INK</div>
+                <div class="opacity-0 transition-all duration-1000 transform translate-y-4 text-[#34D399] text-4xl md:text-6xl mt-4 drop-shadow-[0_0_20px_rgba(52,211,153,0.8)] leading-tight" id="reveal3">
+                    👨‍🚀 AUTOMATIC UNLOCK:<br>PERMANENT MOON GRAVITY!
                 </div>
             </div>
-            <button id="closeTeaserBtn" class="opacity-0 transition-opacity duration-1000 mt-12 ui-font text-xl font-bold bg-[#34D399] text-[#1E3A8A] py-3 px-10 rounded-full border-4 border-[#1E3A8A] hover:bg-[#10B981] shadow-[6px_6px_0px_#1E3A8A] active:translate-y-1 active:shadow-[0px_0px_0px_#1E3A8A]">
-                HYPE!
+            <button id="closeTeaserBtn" class="opacity-0 transition-opacity duration-1000 mt-12 ui-font text-xl font-bold bg-[#FBBF24] text-[#1E3A8A] py-3 px-10 rounded-full border-4 border-[#1E3A8A] hover:bg-[#F59E0B] shadow-[6px_6px_0px_#1E3A8A] active:translate-y-1 active:shadow-[0px_0px_0px_#1E3A8A]">
+                I CAN'T WAIT!
             </button>
         </div>
 
@@ -192,6 +207,10 @@
     const goShopBtn = document.getElementById('goShopBtn');
     const closeShopBtn = document.getElementById('closeShopBtn');
     const shopItemsContainer = document.getElementById('shopItemsContainer');
+    
+    // Tab Selectors
+    const tabPlanesBtn = document.getElementById('tabPlanesBtn');
+    const tabObstaclesBtn = document.getElementById('tabObstaclesBtn');
 
     // Teaser UI Elements
     const teaserScreen = document.getElementById('teaserScreen');
@@ -218,7 +237,7 @@
         powerupDuration: 400 // frames
     };
 
-    // Shop Configuration
+    // Shop Configuration (Planes)
     const SKINS = {
         'classic': { name: 'Classic Blue', cost: 0, fill: '#FFFFFF', stroke: '#1E3A8A' },
         'red_ink': { name: 'Teacher\'s Red', cost: 10, fill: '#FFFFFF', stroke: '#E74C3C' },
@@ -226,6 +245,16 @@
         'gold_foil': { name: 'Gold Foil', cost: 50, fill: '#FDE68A', stroke: '#D97706' },
         'stealth': { name: 'Midnight', cost: 100, fill: '#1E293B', stroke: '#94A3B8' }
     };
+
+    // Shop Configuration (Obstacles)
+    const OBSTACLE_TYPES = {
+        'pencil': { name: 'Classic Pencil', cost: 0, desc: 'The trusty standard HB graphite.' },
+        'pen': { name: 'Ballpoint Pen', cost: 25, desc: 'Adds deep-blue dynamic pens to the game.' },
+        'marker': { name: 'Highlighter', cost: 50, desc: 'Adds wide, green chisel-tip markers.' }
+    };
+
+    // Update 3.0 State
+    let update3Live = localStorage.getItem('doodleGliderUpdate3') === 'true';
 
     // State Variables
     let width, height;
@@ -239,8 +268,10 @@
     let totalStars = parseInt(localStorage.getItem('doodleGliderStars')) || 0;
     let unlockedSkins = JSON.parse(localStorage.getItem('doodleGliderSkins')) || ['classic'];
     let currentSkin = localStorage.getItem('doodleGliderCurrentSkin') || 'classic';
+    let unlockedObstacles = JSON.parse(localStorage.getItem('doodleGliderObstacles')) || ['pencil'];
 
     let currentState = 'START'; // START, PLAYING, GAMEOVER, SHOP
+    let currentShopTab = 'planes'; // 'planes' or 'obstacles'
     let animationId;
     let backgroundOffset = 0;
     let currentSpeed = CONFIG.baseSpeed;
@@ -251,6 +282,11 @@
         magnet: 0
     };
 
+    // Boss Fight Variables
+    let bossActive = false;
+    let bossDefeated = false;
+    let boss;
+
     // Game Objects
     let player;
     let obstacles = [];
@@ -258,6 +294,8 @@
     let stars = [];
     let powerups = [];
     let clouds = [];
+    let bossProjectiles = [];
+    let playerMissiles = [];
     let flightPath = []; // Trail behind the plane
 
     // ----------------------------------------------------
@@ -406,6 +444,11 @@
             
             this.passed = false;
             this.destroyed = false; // For shield impacts
+
+            // Select an unlocked style randomly (Unlocking new styles in the shop increases variety!)
+            const pool = unlockedObstacles.length > 0 ? unlockedObstacles : ['pencil'];
+            const randIdx = Math.floor(Math.random() * pool.length);
+            this.style = pool[randIdx];
         }
 
         update() {
@@ -467,59 +510,58 @@
             ctx.strokeStyle = CONFIG.inkColor;
             ctx.lineJoin = 'round';
 
-            // Wood body
-            ctx.fillStyle = CONFIG.pencilWood;
-            if (isTop) {
-                // Pencil pointing down
-                // Body
-                ctx.fillRect(0, 0, w, h - 30);
-                ctx.strokeRect(0, 0, w, h - 30);
-                
-                // Lines on body
-                ctx.beginPath(); ctx.moveTo(w*0.3, 0); ctx.lineTo(w*0.3, h-30); ctx.stroke();
-                ctx.beginPath(); ctx.moveTo(w*0.7, 0); ctx.lineTo(w*0.7, h-30); ctx.stroke();
+            if (this.style === 'pencil') {
+                // Wood body
+                ctx.fillStyle = CONFIG.pencilWood;
+                if (isTop) {
+                    ctx.fillRect(0, 0, w, h - 30); ctx.strokeRect(0, 0, w, h - 30);
+                    ctx.beginPath(); ctx.moveTo(w*0.3, 0); ctx.lineTo(w*0.3, h-30); ctx.stroke();
+                    ctx.beginPath(); ctx.moveTo(w*0.7, 0); ctx.lineTo(w*0.7, h-30); ctx.stroke();
 
-                // Tip (Wood)
-                ctx.fillStyle = '#FDE68A'; // lighter wood
-                ctx.beginPath();
-                ctx.moveTo(0, h-30);
-                ctx.lineTo(w/2, h);
-                ctx.lineTo(w, h-30);
-                ctx.fill(); ctx.stroke();
+                    ctx.fillStyle = '#FDE68A'; // lighter wood
+                    ctx.beginPath(); ctx.moveTo(0, h-30); ctx.lineTo(w/2, h); ctx.lineTo(w, h-30); ctx.fill(); ctx.stroke();
 
-                // Lead
-                ctx.fillStyle = CONFIG.pencilLead;
-                ctx.beginPath();
-                ctx.moveTo(w*0.35, h-9);
-                ctx.lineTo(w/2, h);
-                ctx.lineTo(w*0.65, h-9);
-                ctx.fill(); ctx.stroke();
-                
-            } else {
-                // Pencil pointing up
-                // Body
-                ctx.fillRect(0, 30, w, h - 30);
-                ctx.strokeRect(0, 30, w, h - 30);
+                    ctx.fillStyle = CONFIG.pencilLead; // Lead
+                    ctx.beginPath(); ctx.moveTo(w*0.35, h-9); ctx.lineTo(w/2, h); ctx.lineTo(w*0.65, h-9); ctx.fill(); ctx.stroke();
+                } else {
+                    ctx.fillRect(0, 30, w, h - 30); ctx.strokeRect(0, 30, w, h - 30);
+                    ctx.beginPath(); ctx.moveTo(w*0.3, 30); ctx.lineTo(w*0.3, h); ctx.stroke();
+                    ctx.beginPath(); ctx.moveTo(w*0.7, 30); ctx.lineTo(w*0.7, h); ctx.stroke();
 
-                // Lines on body
-                ctx.beginPath(); ctx.moveTo(w*0.3, 30); ctx.lineTo(w*0.3, h); ctx.stroke();
-                ctx.beginPath(); ctx.moveTo(w*0.7, 30); ctx.lineTo(w*0.7, h); ctx.stroke();
+                    ctx.fillStyle = '#FDE68A';
+                    ctx.beginPath(); ctx.moveTo(0, 30); ctx.lineTo(w/2, 0); ctx.lineTo(w, 30); ctx.fill(); ctx.stroke();
 
-                // Tip (Wood)
-                ctx.fillStyle = '#FDE68A';
-                ctx.beginPath();
-                ctx.moveTo(0, 30);
-                ctx.lineTo(w/2, 0);
-                ctx.lineTo(w, 30);
-                ctx.fill(); ctx.stroke();
-
-                // Lead
-                ctx.fillStyle = CONFIG.pencilLead;
-                ctx.beginPath();
-                ctx.moveTo(w*0.35, 9);
-                ctx.lineTo(w/2, 0);
-                ctx.lineTo(w*0.65, 9);
-                ctx.fill(); ctx.stroke();
+                    ctx.fillStyle = CONFIG.pencilLead;
+                    ctx.beginPath(); ctx.moveTo(w*0.35, 9); ctx.lineTo(w/2, 0); ctx.lineTo(w*0.65, 9); ctx.fill(); ctx.stroke();
+                }
+            } else if (this.style === 'pen') {
+                ctx.fillStyle = '#2563EB'; // Blue plastic body
+                if (isTop) {
+                    ctx.fillRect(0, 0, w, h - 20); ctx.strokeRect(0, 0, w, h - 20);
+                    ctx.fillStyle = '#94A3B8'; // Silver tip
+                    ctx.beginPath(); ctx.moveTo(0, h-20); ctx.lineTo(w/2, h); ctx.lineTo(w, h-20); ctx.fill(); ctx.stroke();
+                    // Clip
+                    ctx.fillRect(-5, 0, 10, 40); ctx.strokeRect(-5, 0, 10, 40);
+                } else {
+                    ctx.fillRect(0, 20, w, h - 20); ctx.strokeRect(0, 20, w, h - 20);
+                    ctx.fillStyle = '#94A3B8';
+                    ctx.beginPath(); ctx.moveTo(0, 20); ctx.lineTo(w/2, 0); ctx.lineTo(w, 20); ctx.fill(); ctx.stroke();
+                    // Clip
+                    ctx.fillRect(-5, h-40, 10, 40); ctx.strokeRect(-5, h-40, 10, 40);
+                }
+            } else if (this.style === 'marker') {
+                ctx.fillStyle = '#F4F4F5'; // White body
+                const tipColor = '#10B981'; // Green marker
+                if (isTop) {
+                    ctx.fillRect(0, 0, w, h - 25); ctx.strokeRect(0, 0, w, h - 25);
+                    ctx.fillStyle = tipColor;
+                    // Slanted Tip
+                    ctx.beginPath(); ctx.moveTo(w*0.2, h-25); ctx.lineTo(w*0.8, h-25); ctx.lineTo(w*0.8, h); ctx.lineTo(w*0.5, h); ctx.fill(); ctx.stroke();
+                } else {
+                    ctx.fillRect(0, 25, w, h - 25); ctx.strokeRect(0, 25, w, h - 25);
+                    ctx.fillStyle = tipColor;
+                    ctx.beginPath(); ctx.moveTo(w*0.2, 25); ctx.lineTo(w*0.8, 25); ctx.lineTo(w*0.8, 0); ctx.lineTo(w*0.5, 0); ctx.fill(); ctx.stroke();
+                }
             }
 
             ctx.restore();
@@ -527,9 +569,9 @@
 
         draw() {
             if (this.destroyed) return;
-            // Top pencil
+            // Top obstacle
             this.drawPencil(this.x, 0, this.width, this.topHeight, true);
-            // Bottom pencil
+            // Bottom obstacle
             this.drawPencil(this.x, this.bottomY, this.width, height - this.bottomY, false);
         }
     }
@@ -672,8 +714,16 @@
             const dist = Math.hypot(player.x - this.x, player.y - this.y);
             if (dist < player.radius + this.radius && !this.collected) {
                 this.collected = true;
-                sessionStars += 1; // Update session stars instead of flat score
+                sessionStars += 1; 
                 sessionStarDisplay.innerText = sessionStars;
+
+                // Boss Fight Mechanic: Stars turn into Missiles!
+                if (bossActive) {
+                    playerMissiles.push(new InkMissile(player.x, player.y));
+                } else {
+                    score += 5; // Normal bonus
+                    scoreDisplay.innerText = score;
+                }
                 
                 // Explosion particles
                 for(let i=0; i<8; i++){
@@ -691,24 +741,160 @@
             ctx.translate(this.x, yPos);
             ctx.rotate(frames * 0.02);
             
-            ctx.fillStyle = CONFIG.starColor;
-            ctx.strokeStyle = CONFIG.inkColor;
-            ctx.lineWidth = 2;
-            ctx.lineJoin = 'round';
+            // During boss fight, stars look like little bombs/missiles
+            if (bossActive) {
+                ctx.fillStyle = '#EF4444';
+                ctx.beginPath(); ctx.arc(0, 0, this.radius, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+                ctx.fillStyle = '#000'; ctx.fillRect(this.radius-4, -2, 6, 4);
+            } else {
+                ctx.fillStyle = CONFIG.starColor;
+                ctx.strokeStyle = CONFIG.inkColor;
+                ctx.lineWidth = 2;
+                ctx.lineJoin = 'round';
 
-            // Draw 5-pointed star
-            ctx.beginPath();
-            for (let i = 0; i < 5; i++) {
-                ctx.lineTo(Math.cos((18 + i * 72) / 180 * Math.PI) * this.radius,
-                           -Math.sin((18 + i * 72) / 180 * Math.PI) * this.radius);
-                ctx.lineTo(Math.cos((54 + i * 72) / 180 * Math.PI) * (this.radius * 0.4),
-                           -Math.sin((54 + i * 72) / 180 * Math.PI) * (this.radius * 0.4));
+                // Draw 5-pointed star
+                ctx.beginPath();
+                for (let i = 0; i < 5; i++) {
+                    ctx.lineTo(Math.cos((18 + i * 72) / 180 * Math.PI) * this.radius,
+                               -Math.sin((18 + i * 72) / 180 * Math.PI) * this.radius);
+                    ctx.lineTo(Math.cos((54 + i * 72) / 180 * Math.PI) * (this.radius * 0.4),
+                               -Math.sin((54 + i * 72) / 180 * Math.PI) * (this.radius * 0.4));
+                }
+                ctx.closePath();
+                ctx.fill();
+                ctx.stroke();
             }
-            ctx.closePath();
-            ctx.fill();
-            ctx.stroke();
 
             ctx.restore();
+        }
+    }
+
+    // --- BOSS FIGHT CLASSES ---
+
+    class BossEraser {
+        constructor() {
+            this.x = width + 200;
+            this.y = height / 2;
+            this.targetX = width - 150;
+            this.width = 120;
+            this.height = 250;
+            this.hp = 8;
+            this.maxHp = 8;
+            this.bob = 0;
+            this.attackTimer = 0;
+        }
+
+        update() {
+            // Slide in smoothly
+            this.x += (this.targetX - this.x) * 0.05;
+            this.bob += 0.05;
+            
+            // Track player roughly
+            const targetY = player.y;
+            this.y += (targetY - this.y) * 0.02;
+            this.y += Math.sin(this.bob) * 3; // bobbing
+
+            this.attackTimer++;
+            if (this.attackTimer > 60) {
+                this.attackTimer = 0;
+                // Shoot eraser crumb!
+                bossProjectiles.push(new BossCrumb(this.x - this.width/2, this.y + (Math.random()*100 - 50)));
+                
+                // Extra crumb at higher speeds
+                if (Math.random() > 0.5) {
+                    bossProjectiles.push(new BossCrumb(this.x - this.width/2, this.y + (Math.random()*200 - 100)));
+                }
+            }
+        }
+
+        draw() {
+            ctx.save();
+            ctx.translate(this.x, this.y);
+            ctx.lineWidth = 4;
+            ctx.strokeStyle = CONFIG.inkColor;
+            
+            // Pink eraser body
+            ctx.fillStyle = '#F472B6';
+            ctx.fillRect(-this.width/2, -this.height/2, this.width, this.height);
+            ctx.strokeRect(-this.width/2, -this.height/2, this.width, this.height);
+            
+            // White protective sleeve
+            ctx.fillStyle = '#FFFFFF';
+            ctx.fillRect(-this.width/2, -this.height/4, this.width, this.height/2);
+            ctx.strokeRect(-this.width/2, -this.height/4, this.width, this.height/2);
+
+            // Angry Face
+            ctx.fillStyle = '#000';
+            ctx.fillRect(-25, -50, 12, 12); // Left eye
+            ctx.fillRect(15, -50, 12, 12);  // Right eye
+            // Eyebrows
+            ctx.beginPath(); ctx.moveTo(-35, -70); ctx.lineTo(-15, -60); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(35, -70); ctx.lineTo(15, -60); ctx.stroke();
+
+            // HP Bar
+            ctx.fillStyle = '#1E293B';
+            ctx.fillRect(-this.width/2, -this.height/2 - 30, this.width, 15);
+            ctx.fillStyle = '#EF4444';
+            ctx.fillRect(-this.width/2 + 2, -this.height/2 - 28, (this.width - 4) * (this.hp/this.maxHp), 11);
+            
+            ctx.restore();
+        }
+    }
+
+    class BossCrumb {
+        constructor(x, y) {
+            this.x = x; this.y = y; this.radius = 15;
+            this.active = true;
+        }
+        update() {
+            this.x -= (currentSpeed + 3); // Faster than background
+            
+            // Check collision with player
+            const dist = Math.hypot(player.x - this.x, player.y - this.y);
+            if (dist < player.radius + this.radius && this.active) {
+                if (activePowerups.shield > 0) {
+                    activePowerups.shield = 0;
+                    this.active = false;
+                    document.getElementById('shieldIndicator').classList.add('hidden');
+                    for(let i=0; i<10; i++) particles.push(new Particle(this.x, this.y, 'puff'));
+                } else {
+                    gameOver();
+                }
+            }
+        }
+        draw() {
+            if (!this.active) return;
+            ctx.fillStyle = '#F472B6';
+            ctx.strokeStyle = CONFIG.inkColor;
+            ctx.lineWidth = 2;
+            ctx.beginPath(); ctx.arc(this.x, this.y, this.radius, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+        }
+    }
+
+    class InkMissile {
+        constructor(x, y) {
+            this.x = x; this.y = y;
+            this.active = true;
+        }
+        update() {
+            this.x += 12; // Fly fast to the right
+            // Check collision with Boss
+            if (bossActive && boss && this.active) {
+                // simple box collision
+                if (this.x > boss.x - boss.width/2 && this.y > boss.y - boss.height/2 && this.y < boss.y + boss.height/2) {
+                    this.active = false;
+                    boss.hp--;
+                    screenShake = 8;
+                    for(let i=0; i<15; i++) particles.push(new Particle(this.x, this.y, 'puff'));
+                }
+            }
+        }
+        draw() {
+            if (!this.active) return;
+            ctx.fillStyle = CONFIG.inkColor;
+            ctx.beginPath();
+            ctx.ellipse(this.x, this.y, 15, 6, 0, 0, Math.PI*2);
+            ctx.fill();
         }
     }
 
@@ -777,6 +963,33 @@
     // GAME LOGIC
     // ----------------------------------------------------
 
+    function updateEnvironment() {
+        if (update3Live) {
+            // SPACE NOTEBOOK
+            CONFIG.bgColor = '#0F172A'; 
+            CONFIG.gridColor = 'rgba(167, 139, 250, 0.2)'; 
+            CONFIG.inkColor = '#E2E8F0';
+            // Apply moon gravity constantly
+            CONFIG.gravity = 0.12;
+            CONFIG.lift = -4.5;
+        } else if (bossActive) {
+            // DANGER NOTEBOOK
+            CONFIG.bgColor = '#FEE2E2';
+            CONFIG.gridColor = 'rgba(239, 68, 68, 0.4)';
+            CONFIG.inkColor = '#991B1B';
+        } else if (score >= 40) {
+            // BLUEPRINT
+            CONFIG.bgColor = '#1E3A8A';
+            CONFIG.gridColor = 'rgba(255, 255, 255, 0.2)';
+            CONFIG.inkColor = '#FFFFFF';
+        } else {
+            // CLASSIC
+            CONFIG.bgColor = '#F4F1EA';
+            CONFIG.gridColor = 'rgba(147, 197, 253, 0.4)';
+            CONFIG.inkColor = '#1E3A8A';
+        }
+    }
+
     function initGame() {
         player = new Player();
         obstacles = [];
@@ -784,7 +997,10 @@
         stars = [];
         powerups = [];
         clouds = [];
+        bossProjectiles = [];
+        playerMissiles = [];
         flightPath = [];
+        
         score = 0;
         sessionStars = 0;
         frames = 0;
@@ -793,6 +1009,10 @@
         activePowerups = { shield: 0, magnet: 0 };
         screenShake = 0;
         
+        bossActive = false;
+        bossDefeated = false;
+        boss = null;
+
         scoreDisplay.innerText = '0';
         sessionStarDisplay.innerText = '0';
         document.getElementById('shieldIndicator').classList.add('hidden');
@@ -807,6 +1027,8 @@
     }
 
     function drawBackground() {
+        updateEnvironment();
+
         ctx.fillStyle = CONFIG.bgColor;
         ctx.fillRect(0, 0, width, height);
 
@@ -830,14 +1052,16 @@
         ctx.stroke();
 
         // Draw marginal line (red vertical line typical on lined paper)
-        ctx.strokeStyle = 'rgba(239, 68, 68, 0.2)';
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        let marginX = (width * 0.1 + backgroundOffset * 0.5) % (width + 100);
-        if (marginX < 0) marginX += (width + 100); // Keep it wrapping
-        ctx.moveTo(marginX, 0);
-        ctx.lineTo(marginX, height);
-        ctx.stroke();
+        if (!update3Live && !bossActive) {
+            ctx.strokeStyle = 'rgba(239, 68, 68, 0.2)';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            let marginX = (width * 0.1 + backgroundOffset * 0.5) % (width + 100);
+            if (marginX < 0) marginX += (width + 100); // Keep it wrapping
+            ctx.moveTo(marginX, 0);
+            ctx.lineTo(marginX, height);
+            ctx.stroke();
+        }
 
         // Draw Clouds
         for(let cloud of clouds) {
@@ -858,7 +1082,8 @@
         ctx.lineTo(player.x, player.y);
 
         const skin = SKINS[currentSkin] || SKINS['classic'];
-        ctx.strokeStyle = skin.stroke; // Match trail to skin color
+        // Default to white trail in dark modes
+        ctx.strokeStyle = (update3Live || (score >= 40 && !bossActive)) ? '#FFFFFF' : skin.stroke; 
         ctx.globalAlpha = 0.3;
         ctx.lineWidth = 2;
         ctx.setLineDash([5, 10]); // Dashed line
@@ -878,6 +1103,7 @@
         localStorage.setItem('doodleGliderStars', totalStars);
         localStorage.setItem('doodleGliderSkins', JSON.stringify(unlockedSkins));
         localStorage.setItem('doodleGliderCurrentSkin', currentSkin);
+        localStorage.setItem('doodleGliderObstacles', JSON.stringify(unlockedObstacles));
         
         // Update UI displays
         totalStarsDisplay.innerText = totalStars;
@@ -923,6 +1149,14 @@
 
         if (currentState === 'PLAYING') {
             
+            // Trigger Boss Fight! (Update 2.0 Feature)
+            if (score === 20 && !bossDefeated && !bossActive) {
+                bossActive = true;
+                boss = new BossEraser();
+                obstacles = []; // clear incoming pens
+                screenShake = 20; // Big entrance!
+            }
+
             // Cloud Spawning & Updating
             if (Math.random() < 0.01) clouds.push(new Cloud());
             for (let i = clouds.length - 1; i >= 0; i--) {
@@ -933,77 +1167,104 @@
             // Update & Draw Trail
             drawFlightPath();
 
-            // Spawn Obstacles (Randomized placement)
-            if (frames >= nextObstacleFrame) {
-                obstacles.push(new Obstacle(width));
+            if (bossActive) {
+                // --- BOSS FIGHT LOGIC ---
+                boss.update();
+                boss.draw();
                 
-                // Adjust gap spacing relative to current speed to prevent impossible jumps
-                let spacingBoost = (currentSpeed - CONFIG.baseSpeed) * 15;
-                nextObstacleFrame = frames + Math.floor(Math.random() * 50) + 70 + spacingBoost;
-                
-                const lastObs = obstacles[obstacles.length-1];
-                const gapCenterY = lastObs.topHeight + (CONFIG.gapSize / 2);
+                // Spawn ammo for player
+                if (frames % 80 === 0) {
+                    stars.push(new Star(width + 20, Math.random() * (height - 100) + 50));
+                }
 
-                // Spawning Logic for Extras (Stars or Powerups)
-                const rand = Math.random();
-                if (rand < 0.05 && (activePowerups.shield === 0 || activePowerups.magnet === 0)) {
-                    // 5% chance for a Powerup (if we don't have it active)
-                    const type = Math.random() < 0.5 ? 'shield' : 'magnet';
-                    powerups.push(new PowerUp(width + 20, gapCenterY, type));
-                } else if (rand < 0.5) {
-                    // 45% chance for a Star
-                    stars.push(new Star(width + 20, gapCenterY));
+                // Check boss death
+                if (boss.hp <= 0) {
+                    bossActive = false;
+                    bossDefeated = true;
+                    score += 20; // Huge reward
+                    scoreDisplay.innerText = score;
+                    screenShake = 40;
+                    for(let i=0; i<60; i++) particles.push(new Particle(boss.x, boss.y, 'puff'));
+                    bossProjectiles = []; // clear dangerous projectiles
+                    nextObstacleFrame = frames + 150; // Give a break
+                }
+            } else {
+                // --- NORMAL LOGIC ---
+                // Spawn Obstacles
+                if (frames >= nextObstacleFrame) {
+                    obstacles.push(new Obstacle(width));
+                    
+                    let spacingBoost = (currentSpeed - CONFIG.baseSpeed) * 15;
+                    nextObstacleFrame = frames + Math.floor(Math.random() * 50) + 70 + spacingBoost;
+                    
+                    const lastObs = obstacles[obstacles.length-1];
+                    const gapCenterY = lastObs.topHeight + (CONFIG.gapSize / 2);
+
+                    const rand = Math.random();
+                    if (rand < 0.05 && (activePowerups.shield === 0 || activePowerups.magnet === 0)) {
+                        const type = Math.random() < 0.5 ? 'shield' : 'magnet';
+                        powerups.push(new PowerUp(width + 20, gapCenterY, type));
+                    } else if (rand < 0.5) {
+                        stars.push(new Star(width + 20, gapCenterY));
+                    }
+                }
+
+                // Update Obstacles
+                for (let i = obstacles.length - 1; i >= 0; i--) {
+                    obstacles[i].update();
+                    obstacles[i].draw();
+                    if (obstacles[i].x + obstacles[i].width < 0) obstacles.splice(i, 1);
                 }
             }
 
-            // Update & Draw Obstacles
-            for (let i = obstacles.length - 1; i >= 0; i--) {
-                obstacles[i].update();
-                obstacles[i].draw();
-                if (obstacles[i].x + obstacles[i].width < 0) {
-                    obstacles.splice(i, 1);
-                }
+            // Update Boss Projectiles
+            for (let i = bossProjectiles.length - 1; i >= 0; i--) {
+                bossProjectiles[i].update();
+                bossProjectiles[i].draw();
+                if (bossProjectiles[i].x < -50 || !bossProjectiles[i].active) bossProjectiles.splice(i, 1);
             }
 
-            // Update & Draw Stars
+            // Update Player Missiles
+            for (let i = playerMissiles.length - 1; i >= 0; i--) {
+                playerMissiles[i].update();
+                playerMissiles[i].draw();
+                if (playerMissiles[i].x > width + 50 || !playerMissiles[i].active) playerMissiles.splice(i, 1);
+            }
+
+            // Update Stars
             for (let i = stars.length - 1; i >= 0; i--) {
                 stars[i].update();
                 stars[i].draw();
-                if (stars[i].x + stars[i].radius < 0 || stars[i].collected) {
-                    stars.splice(i, 1);
-                }
+                if (stars[i].x + stars[i].radius < 0 || stars[i].collected) stars.splice(i, 1);
             }
 
-            // Update & Draw Powerups
+            // Update Powerups
             for (let i = powerups.length - 1; i >= 0; i--) {
                 powerups[i].update();
                 powerups[i].draw();
-                if (powerups[i].x + powerups[i].radius < 0 || powerups[i].collected) {
-                    powerups.splice(i, 1);
-                }
+                if (powerups[i].x + powerups[i].radius < 0 || powerups[i].collected) powerups.splice(i, 1);
             }
 
-            // Update & Draw Player
+            // Update Player
             player.update();
             player.draw();
 
             frames++;
         } else if (currentState === 'GAMEOVER') {
-            // Just draw everything static
             drawFlightPath();
             obstacles.forEach(obs => obs.draw());
             stars.forEach(s => s.draw());
             powerups.forEach(p => p.draw());
+            bossProjectiles.forEach(p => p.draw());
+            if (bossActive && boss) boss.draw();
             player.draw();
         }
 
-        // Update & Draw Particles (active in all states)
+        // Particles always update
         for (let i = particles.length - 1; i >= 0; i--) {
             particles[i].update();
             particles[i].draw();
-            if (particles[i].life <= 0) {
-                particles.splice(i, 1);
-            }
+            if (particles[i].life <= 0) particles.splice(i, 1);
         }
 
         ctx.restore(); // Restore from screen shake
@@ -1041,6 +1302,18 @@
         startScreen.classList.add('hidden');
         gameOverScreen.classList.add('hidden');
         shopScreen.classList.remove('hidden');
+        switchShopTab('planes');
+    }
+
+    function switchShopTab(tab) {
+        currentShopTab = tab;
+        if (tab === 'planes') {
+            tabPlanesBtn.className = "flex-1 py-2 rounded-lg ui-font font-bold text-sm transition-all bg-[#1E3A8A] text-white";
+            tabObstaclesBtn.className = "flex-1 py-2 rounded-lg ui-font font-bold text-sm transition-all text-slate-600 hover:bg-slate-100";
+        } else {
+            tabPlanesBtn.className = "flex-1 py-2 rounded-lg ui-font font-bold text-sm transition-all text-slate-600 hover:bg-slate-100";
+            tabObstaclesBtn.className = "flex-1 py-2 rounded-lg ui-font font-bold text-sm transition-all bg-[#1E3A8A] text-white";
+        }
         renderShop();
     }
 
@@ -1054,41 +1327,89 @@
     function renderShop() {
         shopItemsContainer.innerHTML = ''; // clear
         
-        Object.keys(SKINS).forEach(key => {
-            const skin = SKINS[key];
-            const isUnlocked = unlockedSkins.includes(key);
-            const isEquipped = currentSkin === key;
-            
-            const itemDiv = document.createElement('div');
-            itemDiv.className = 'flex items-center justify-between p-3 border-2 border-slate-300 rounded-xl bg-white';
-            
-            // Icon preview
-            const iconHTML = `<div class="w-10 h-10 rounded-full border-2 flex items-center justify-center shadow-inner" style="background-color: ${skin.fill}; border-color: ${skin.stroke};">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="${skin.stroke}" stroke-width="2"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
-            </div>`;
+        if (currentShopTab === 'planes') {
+            // Render Glider Skins
+            Object.keys(SKINS).forEach(key => {
+                const skin = SKINS[key];
+                const isUnlocked = unlockedSkins.includes(key);
+                const isEquipped = currentSkin === key;
+                
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'flex items-center justify-between p-3 border-2 border-slate-300 rounded-xl bg-white';
+                
+                // Icon preview
+                const iconHTML = `<div class="w-10 h-10 rounded-full border-2 flex items-center justify-center shadow-inner shrink-0" style="background-color: ${skin.fill}; border-color: ${skin.stroke};">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="${skin.stroke}" stroke-width="2"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+                </div>`;
 
-            let actionBtnHTML = '';
-            if (isEquipped) {
-                actionBtnHTML = `<button disabled class="ui-font font-bold px-4 py-1.5 rounded-full bg-slate-200 text-slate-500 cursor-not-allowed">Equipped</button>`;
-            } else if (isUnlocked) {
-                actionBtnHTML = `<button onclick="equipSkin('${key}')" class="ui-font font-bold px-4 py-1.5 rounded-full bg-[#34D399] text-[#1E3A8A] border-2 border-[#1E3A8A] hover:-translate-y-0.5 transition-transform shadow-[2px_2px_0px_#1E3A8A] active:translate-y-0 active:shadow-none">Equip</button>`;
-            } else {
-                const canAfford = totalStars >= skin.cost;
-                actionBtnHTML = `<button onclick="buySkin('${key}')" ${!canAfford ? 'disabled' : ''} class="ui-font font-bold px-4 py-1.5 rounded-full ${canAfford ? 'bg-[#FBBF24] text-[#1E3A8A] border-2 border-[#1E3A8A] hover:-translate-y-0.5 shadow-[2px_2px_0px_#1E3A8A] active:translate-y-0 active:shadow-none' : 'bg-slate-200 text-slate-400 border-2 border-slate-300 cursor-not-allowed'} transition-transform flex items-center gap-1">
-                    ⭐ ${skin.cost}
-                </button>`;
-            }
+                let actionBtnHTML = '';
+                if (isEquipped) {
+                    actionBtnHTML = `<button disabled class="ui-font font-bold px-4 py-1.5 rounded-full bg-slate-200 text-slate-500 cursor-not-allowed">Equipped</button>`;
+                } else if (isUnlocked) {
+                    actionBtnHTML = `<button onclick="equipSkin('${key}')" class="ui-font font-bold px-4 py-1.5 rounded-full bg-[#34D399] text-[#1E3A8A] border-2 border-[#1E3A8A] hover:-translate-y-0.5 transition-transform shadow-[2px_2px_0px_#1E3A8A] active:translate-y-0 active:shadow-none">Equip</button>`;
+                } else {
+                    const canAfford = totalStars >= skin.cost;
+                    actionBtnHTML = `<button onclick="buySkin('${key}')" ${!canAfford ? 'disabled' : ''} class="ui-font font-bold px-4 py-1.5 rounded-full ${canAfford ? 'bg-[#FBBF24] text-[#1E3A8A] border-2 border-[#1E3A8A] hover:-translate-y-0.5 shadow-[2px_2px_0px_#1E3A8A] active:translate-y-0 active:shadow-none' : 'bg-slate-200 text-slate-400 border-2 border-slate-300 cursor-not-allowed'} transition-transform flex items-center gap-1">
+                        ⭐ ${skin.cost}
+                    </button>`;
+                }
 
-            itemDiv.innerHTML = `
-                <div class="flex items-center gap-3">
-                    ${iconHTML}
-                    <span class="ui-font font-bold text-slate-700">${skin.name}</span>
-                </div>
-                ${actionBtnHTML}
-            `;
-            
-            shopItemsContainer.appendChild(itemDiv);
-        });
+                itemDiv.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        ${iconHTML}
+                        <div class="flex flex-col">
+                            <span class="ui-font font-bold text-slate-700 leading-tight">${skin.name}</span>
+                            <span class="text-xs text-slate-400">Glider Skin</span>
+                        </div>
+                    </div>
+                    ${actionBtnHTML}
+                `;
+                
+                shopItemsContainer.appendChild(itemDiv);
+            });
+        } else {
+            // Render Obstacle Purchases
+            Object.keys(OBSTACLE_TYPES).forEach(key => {
+                const obs = OBSTACLE_TYPES[key];
+                const isUnlocked = unlockedObstacles.includes(key);
+                
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'flex items-center justify-between p-3 border-2 border-slate-300 rounded-xl bg-white';
+                
+                // Icon preview mapping
+                let previewColor = '#FBBF24'; // default pencil
+                let previewLabel = '✏️';
+                if (key === 'pen') { previewColor = '#2563EB'; previewLabel = '🖋️'; }
+                else if (key === 'marker') { previewColor = '#10B981'; previewLabel = '🖍️'; }
+
+                const iconHTML = `<div class="w-10 h-10 rounded-xl border-2 flex items-center justify-center shadow-inner shrink-0 bg-slate-50 border-slate-300">
+                    <span class="text-2xl">${previewLabel}</span>
+                </div>`;
+
+                let actionBtnHTML = '';
+                if (isUnlocked) {
+                    actionBtnHTML = `<span class="ui-font font-bold px-4 py-1.5 rounded-full bg-blue-50 text-blue-600 text-sm border border-blue-200 text-center">In Pool</span>`;
+                } else {
+                    const canAfford = totalStars >= obs.cost;
+                    actionBtnHTML = `<button onclick="buyObstacle('${key}')" ${!canAfford ? 'disabled' : ''} class="ui-font font-bold px-4 py-1.5 rounded-full ${canAfford ? 'bg-[#FBBF24] text-[#1E3A8A] border-2 border-[#1E3A8A] hover:-translate-y-0.5 shadow-[2px_2px_0px_#1E3A8A] active:translate-y-0 active:shadow-none' : 'bg-slate-200 text-slate-400 border-2 border-slate-300 cursor-not-allowed'} transition-transform flex items-center gap-1">
+                        ⭐ ${obs.cost}
+                    </button>`;
+                }
+
+                itemDiv.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        ${iconHTML}
+                        <div class="flex flex-col pr-2">
+                            <span class="ui-font font-bold text-slate-700 leading-tight">${obs.name}</span>
+                            <span class="text-[10px] text-slate-500 max-w-[150px] leading-tight">${obs.desc}</span>
+                        </div>
+                    </div>
+                    ${actionBtnHTML}
+                `;
+                
+                shopItemsContainer.appendChild(itemDiv);
+            });
+        }
     }
 
     // Window exposure for inline onclick handlers
@@ -1109,6 +1430,16 @@
         }
     };
 
+    window.buyObstacle = function(key) {
+        const obs = OBSTACLE_TYPES[key];
+        if (totalStars >= obs.cost && !unlockedObstacles.includes(key)) {
+            totalStars -= obs.cost;
+            unlockedObstacles.push(key);
+            savePlayerData();
+            renderShop();
+        }
+    };
+
     // Bind inputs
     window.addEventListener('keydown', handleAction);
     canvas.addEventListener('mousedown', handleAction);
@@ -1119,17 +1450,21 @@
     shopBtn.addEventListener('click', openShop);
     goShopBtn.addEventListener('click', openShop);
     closeShopBtn.addEventListener('click', closeShop);
+    
+    // Tab event listeners
+    tabPlanesBtn.addEventListener('click', () => switchShopTab('planes'));
+    tabObstaclesBtn.addEventListener('click', () => switchShopTab('obstacles'));
 
     // ----------------------------------------------------
-    // TEASER LOGIC (The "Wink Wink" Scripted Event)
+    // TEASER LOGIC (Update 3.0 Real Timer)
     // ----------------------------------------------------
     
-    // Check if we already have a target date saved offline
-    let targetDate = localStorage.getItem('doodleGliderEventDate');
+    // Check offline saved target date for Update 3.0
+    let targetDate = localStorage.getItem('doodleGliderEventDate3');
     if (!targetDate) {
-        // Exactly 1 day and 5 hours from first load
-        targetDate = new Date().getTime() + (29 * 60 * 60 * 1000); 
-        localStorage.setItem('doodleGliderEventDate', targetDate);
+        // Exactly 48 hours from first load of Update 2.0
+        targetDate = new Date().getTime() + (48 * 60 * 60 * 1000); 
+        localStorage.setItem('doodleGliderEventDate3', targetDate);
     } else {
         targetDate = parseInt(targetDate, 10);
     }
@@ -1139,7 +1474,11 @@
         const distance = targetDate - now;
 
         if (distance < 0) {
-            countdownDisplay.innerText = "NOW!";
+            countdownDisplay.innerText = "NOW! (Moon Gravity Unlocked)";
+            if (!update3Live) {
+                localStorage.setItem('doodleGliderUpdate3', 'true');
+                update3Live = true;
+            }
             return;
         }
 
